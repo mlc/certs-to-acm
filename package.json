@@ -1,0 +1,17 @@
+{
+  "name": "certs-to-acm",
+  "version": "1.0.0",
+  "description": "take certs from node-letsencrypt-lambda and put them in ACM",
+  "main": "handler.js",
+  "dependencies": {
+    "aws-sdk": "^2.50.0",
+    "es6-promisify": "^5.0.0",
+    "pem": "^1.9.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {"name": "mike castleman", "url": "https://github.com/mlc"},
+  "license": "Unlicense"
+}
