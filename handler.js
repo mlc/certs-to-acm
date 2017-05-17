@@ -4,7 +4,7 @@ const AWS = require('aws-sdk'),
   pem = require('pem'),
   promisify = require('es6-promisify');
 
-const region = 'us-east-1',
+const region = process.env['REGION'],
   prefix = process.env['STAGE'] + '/';
 
 const readCertificateInfo = promisify(pem.readCertificateInfo);

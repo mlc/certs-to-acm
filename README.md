@@ -38,9 +38,9 @@ certificate bucket are delivered to an SNS topic, as described in the
 Copy `serverless.yml.example` to `serverless.yml`, and fill in the IAM role
 and SNS topic ARNs you generated above.
 
-(Note that this script expects to run in the `us-east-1`, as required for ACM
-certificates which will be used with Cloudfront. But if your needs differ, it
-should be straightforward to modify things appropriately.)
+(Probably you want to put this script and all related resources in the
+`us-east-1` region, as required for ACM certificates which will be used with
+Cloudfront. But if your needs differ, you can use the region of your choice.)
 
 Deploy by doing:
 ```

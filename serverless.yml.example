@@ -16,6 +16,7 @@ provider:
 
   environment:
     STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
 
 package:
   exclude:
