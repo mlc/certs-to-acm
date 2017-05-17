@@ -36,7 +36,8 @@ certificate bucket are delivered to an SNS topic, as described in the
 `node-letsencrypt-lambda` documentation.
 
 Copy `serverless.yml.example` to `serverless.yml`, and fill in the IAM role
-and SNS topic ARNs you generated above.
+and SNS topic ARNs you generated above. Set the `stage` to be the same as the
+`s3-folder` from `node-letsencrypt-lambda`.
 
 (Probably you want to put this script and all related resources in the
 `us-east-1` region, as required for ACM certificates which will be used with
