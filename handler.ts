@@ -14,11 +14,37 @@ const prefix = process.env['STAGE'] + '/';
 const s3 = new S3Client({ region });
 const acm = new ACMClient({ region });
 
+interface Jwk {
+  kty: string;
+  n: string;
+  e: string;
+}
+
+interface PrivateJwk extends Jwk {
+  d: string;
+  p: string;
+  q: string;
+  dp: string;
+  dq: string;
+  qi: string;
+}
+
+interface LECert {
+  cert: string;
+  issuerCert: string;
+  key: {
+    privateKeyPem: string;
+    publicKeyPem: string;
+    privateKeyJwk: PrivateJwk;
+    publicKeyJwk: Jwk;
+  };
+}
+
 const existingCert = (
-  cert: string,
+  cert: Buffer,
   existingCerts: CertificateSummary[]
 ): string | undefined => {
-  const certInfo = Certificate.fromPEM(Buffer.from(cert));
+  const certInfo = Certificate.fromPEM(cert);
   return existingCerts.find((c) => c.DomainName === certInfo.subject.commonName)
     ?.CertificateArn;
 };
@@ -30,14 +56,15 @@ const handleCert = async (
 ) => {
   const { Body } = await s3.send(new GetObjectCommand({ Bucket, Key }));
   const certJson = await getStream(Body);
-  const cert = JSON.parse(certJson);
-  const arn = existingCert(cert.cert, existingCerts);
+  const leCert = JSON.parse(certJson) as LECert;
+  const cert = Buffer.from(leCert.cert);
+  const arn = existingCert(cert, existingCerts);
   return acm.send(
     new ImportCertificateCommand({
       CertificateArn: arn,
-      Certificate: cert.cert,
-      CertificateChain: cert.issuerCert,
-      PrivateKey: cert.key.privateKeyPem,
+      Certificate: cert,
+      CertificateChain: Buffer.from(leCert.issuerCert),
+      PrivateKey: Buffer.from(leCert.key.privateKeyPem),
     })
   );
 };
