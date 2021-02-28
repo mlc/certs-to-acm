@@ -6,14 +6,13 @@
   "dependencies": {
     "@aws-sdk/client-acm": "^3.6.1",
     "@aws-sdk/client-s3": "^3.6.1",
-    "get-stream": "^6.0.0",
-    "pem": "^1.14.4"
+    "@fidm/x509": "^1.2.1",
+    "get-stream": "^6.0.0"
   },
   "devDependencies": {
     "@tsconfig/node14": "^1.0.0",
     "@types/aws-lambda": "^8.10.72",
     "@types/node": "*",
-    "@types/pem": "^1.9.5",
     "prettier": "^2.2.1",
     "serverless": "^2.25.2",
     "serverless-plugin-typescript": "^1.1.9",

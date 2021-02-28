@@ -5,27 +5,21 @@ import {
   ImportCertificateCommand,
   paginateListCertificates,
 } from '@aws-sdk/client-acm';
+import { Certificate } from '@fidm/x509';
 import getStream from 'get-stream';
-import { readCertificateInfo, CertificateSubjectReadResult } from 'pem';
-import { promisify } from 'util';
 
 const region = process.env['REGION'];
 const prefix = process.env['STAGE'] + '/';
 
-const asyncReadCertificateInfo = promisify<
-  string,
-  CertificateSubjectReadResult
->(readCertificateInfo);
-
 const s3 = new S3Client({ region });
 const acm = new ACMClient({ region });
 
-const existingCert = async (
+const existingCert = (
   cert: string,
   existingCerts: CertificateSummary[]
-): Promise<string | undefined> => {
-  const certInfo = await asyncReadCertificateInfo(cert);
-  return existingCerts.find((c) => c.DomainName === certInfo.commonName)
+): string | undefined => {
+  const certInfo = Certificate.fromPEM(Buffer.from(cert));
+  return existingCerts.find((c) => c.DomainName === certInfo.subject.commonName)
     ?.CertificateArn;
 };
 
@@ -37,7 +31,7 @@ const handleCert = async (
   const { Body } = await s3.send(new GetObjectCommand({ Bucket, Key }));
   const certJson = await getStream(Body);
   const cert = JSON.parse(certJson);
-  const arn = await existingCert(cert.cert, existingCerts);
+  const arn = existingCert(cert.cert, existingCerts);
   return acm.send(
     new ImportCertificateCommand({
       CertificateArn: arn,
