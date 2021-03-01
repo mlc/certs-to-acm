@@ -31,7 +31,7 @@ interface PrivateJwk extends Jwk {
 
 interface LECert {
   cert: string;
-  issuerCert: string;
+  issuerCert?: string;
   key: {
     privateKeyPem: string;
     publicKeyPem: string;
@@ -63,7 +63,10 @@ const handleCert = async (
     new ImportCertificateCommand({
       CertificateArn: arn,
       Certificate: cert,
-      CertificateChain: Buffer.from(leCert.issuerCert),
+      CertificateChain:
+        typeof leCert.issuerCert === 'string' && leCert.issuerCert.length > 0
+          ? Buffer.from(leCert.issuerCert)
+          : undefined,
       PrivateKey: Buffer.from(leCert.key.privateKeyPem),
     })
   );
